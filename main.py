@@ -8,6 +8,7 @@ from excel_importer import import_clients_from_excel
 import os
 from typing import List
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse, JSONResponse
 
 
 create_tables()
@@ -62,3 +63,15 @@ def create_payment(payment: schemas.PaymentCreate, db: Session = Depends(get_db)
     db.commit()
     db.refresh(db_payment)
     return db_payment
+
+
+@app.get("/enter_data", response_class=HTMLResponse)
+async def enter_data():
+    with open("templates/enter_data.html", encoding="utf-8") as f:
+        html_content = f.read()
+    return HTMLResponse(content=html_content)
+
+@app.post("/save_data")
+async def save_data(data: dict):
+    # Process and save data as needed
+    return JSONResponse({"received": data["data"], "status": "success"})

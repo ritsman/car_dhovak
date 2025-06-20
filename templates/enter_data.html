@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Handsontable Example</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    #hot { margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+  <h2>Enter Data (Flat No, Name, Mobile)</h2>
+  <div id="hot"></div>
+  <button onclick="saveData()">Save Data</button>
+  <div id="result"></div>
+  <script>
+    // Dummy data
+    const data = [
+      ['101', 'Alice', '9876543210'],
+      ['102', 'Bob', '9123456780'],
+      ['103', 'Charlie', '9988776655']
+    ];
+    const container = document.getElementById('hot');
+    const hot = new Handsontable(container, {
+      data: data,
+      colHeaders: ['Flat No', 'Name', 'Mobile'],
+      rowHeaders: true,
+      width: 600,
+      height: 250,
+      licenseKey: 'non-commercial-and-evaluation'
+    });
+
+    function saveData() {
+      fetch('/save_data', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({data: hot.getData()})
+      })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('result').innerText = 'Saved! Server response: ' + JSON.stringify(data);
+      })
+      .catch(err => {
+        document.getElementById('result').innerText = 'Error saving data';
+      });
+    }
+  </script>
+</body>
+</html>
